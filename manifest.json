@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+        "github.com/golang/glog": {
+            "branch": "master"
+        },
+        "github.com/spf13/cobra": {
+            "revision": "f368244301305f414206f889b1735a54cfc8bde8"
+        }
+    }
+}
