@@ -17,20 +17,20 @@ BUILD_NUMBER ?= "local"
 GO_FILES := $(shell find . -type f -name '*.go' -not -path "./*vendor/*")
 NAME := cassandra-k8s-util
 
-build: govet
-	mkdir -p .bin/linux-amd64 .bin/darwin
-	GOOS=darwin GOARCH=amd64 go build -o .bin/darwin/${NAME} ./
+build: govet build-darwin copy-bin
 
+copy-bin:
+	mkdir -p .bin/linux-amd64 .bin/darwin
 ifeq ($(UNAME),Linux)
 	cp .bin/linux-amd64/${NAME} $(GOPATH)/bin/
 else
 	cp .bin/darwin/${NAME} $(GOPATH)/bin/
 endif
 
+build-darwin:
+	GOOS=darwin GOARCH=amd64 go build -o .bin/darwin/${NAME} ./
 build-linux:
 	GOOS=linux GOARCH=amd64 go build -o .bin/linux-amd64/${NAME} ./
-
-full-build: build build-linux
 
 govet: 
 	go vet \
@@ -55,11 +55,7 @@ verify-boilerplate:
 verify-gofmt:
 	hack/verify-gofmt.sh
 
-.PHONY: verify-packages
-verify-packages:
-	hack/verify-packages.sh
+#verify-boilerplate
 
-#verify-boilerplate verify-gofmt verify-packages
-
-ci: govet verify-gofmt full-build test
+ci: govet verify-gofmt test
 	echo "Done!"
