@@ -1,18 +1,10 @@
 {
-    "memo": "012f61cb7d409bed5555efc2b5cd97a5d597a7a72e1478a8085e1d6c58468b45",
+    "memo": "a070883ecec3827635b37fb1669fb96b3ae914176c3d93c14a26e9997112cd85",
     "projects": [
         {
             "name": "github.com/ChimeraCoder/gojson",
             "branch": "master",
             "revision": "6039f74e19c1090f88a75f74700b72e539717a22",
-            "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/ghodss/yaml",
-            "branch": "master",
-            "revision": "04f313413ffd65ce25f2541bfd2b2ceec5c0908c",
             "packages": [
                 "."
             ]
@@ -29,6 +21,14 @@
             "name": "github.com/inconshreveable/mousetrap",
             "branch": "master",
             "revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/serenize/snaker",
+            "branch": "master",
+            "revision": "543781d2b79bd95c51ffe70e70a55c946ca211ff",
             "packages": [
                 "."
             ]
