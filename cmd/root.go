@@ -16,10 +16,10 @@ package cmd
 
 import (
 	goflag "flag"
-	"os"
-	"io"
-	"github.com/spf13/cobra"
 	helper "github.com/k8s-for-greeks/cassandra-k8s-util/pkg/util/cmd"
+	"github.com/spf13/cobra"
+	"io"
+	"os"
 )
 
 // FIXME put this into a struct
@@ -33,9 +33,9 @@ examples and usage of using your application. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-// Uncomment the following line if your bare application
-// has an action associated with it:
-//	Run: func(cmd *cobra.Command, args []string) { },
+	// Uncomment the following line if your bare application
+	// has an action associated with it:
+	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -59,4 +59,3 @@ func NewCmdRoot(out io.Writer) *cobra.Command {
 
 	return RootCmd
 }
-

@@ -40,7 +40,7 @@ func TestCreateCassandraConf(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	env := []string {
+	env := []string{
 		"FOO",
 		"CASSANDRA_SEEDS=\"127.0.0.1,10.0.0.1\"",
 		"CASSANDRA_CLUSTER_NAME=foo",

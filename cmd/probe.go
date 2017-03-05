@@ -15,9 +15,8 @@
 package cmd
 
 import (
-
-	"github.com/spf13/cobra"
 	"github.com/golang/glog"
+	"github.com/spf13/cobra"
 )
 
 // probeCmd represents the probe command

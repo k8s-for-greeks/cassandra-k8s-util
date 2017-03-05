@@ -24,8 +24,8 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
-	yaml "gopkg.in/yaml.v2"
 	"github.com/serenize/snaker"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type CassandraConf struct {
@@ -80,7 +80,6 @@ func (cass CassandraConf) CreateCassandraConf(env []string) (*CassandraConf, err
 			continue
 		}
 
-
 		key = snaker.SnakeToCamel(key)
 
 		v := reflect.ValueOf(cass.conf).Elem().FieldByName(key)
@@ -112,22 +111,21 @@ func (cass CassandraConf) CreateCassandraConf(env []string) (*CassandraConf, err
 	dir := "/var/lib/cassandra/"
 
 	if len(cass.conf.DataFileDirectories) == 0 {
-		cass.conf.DataFileDirectories = []string { dir + "data" }
+		cass.conf.DataFileDirectories = []string{dir + "data"}
 	}
 	if cass.conf.CommitlogDirectory == "" {
-		cass.conf.DataFileDirectories = []string { dir + "commitlog" }
+		cass.conf.DataFileDirectories = []string{dir + "commitlog"}
 	}
 
 	if cass.conf.CdcRawDirectory == "" {
-		cass.conf.DataFileDirectories = []string { dir + "cdc_raw" }
+		cass.conf.DataFileDirectories = []string{dir + "cdc_raw"}
 	}
 	if cass.conf.SavedCachesDirectory == "" {
-		cass.conf.DataFileDirectories = []string { dir + "saved_caches" }
+		cass.conf.DataFileDirectories = []string{dir + "saved_caches"}
 	}
 	if cass.conf.HintsDirectory == "" {
-		cass.conf.DataFileDirectories = []string { dir + "hints" }
+		cass.conf.DataFileDirectories = []string{dir + "hints"}
 	}
-
 
 	return &cass, nil
 }
