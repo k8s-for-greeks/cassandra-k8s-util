@@ -1,0 +1,9 @@
+language: go
+go:
+  - 1.8
+
+go_import_path: github.com/k8s-for-greeks/cassandra-k8s-util
+
+script:
+  - make ci
+

@@ -41,6 +41,7 @@ verify-gofmt:
 verify-packages:
 	hack/verify-packages.sh
 
-ci: test govet verify-boilerplate verify-gofmt verify-packages
-	echo "Done!"
+#verify-boilerplate verify-gofmt verify-packages
 
+ci: govet test
+	echo "Done!"
