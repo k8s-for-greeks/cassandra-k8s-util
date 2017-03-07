@@ -60,11 +60,14 @@ to quickly create a Cobra application.`,
 }
 
 // TODO trim last "/"
+// TODO need to write unit test
 
 func RunCreateConfig(cmd *cobra.Command, args []string, output io.Writer, options *CreateConfigOptions) error {
 
+	// TODO refactor to in dir and out dir ...
+
 	in := "/usr/local/apache-cassandra/conf/cassandra.yaml"
-	out := "/etc/conf/cassandra.yaml"
+	out := "/etc/cassandra/cassandra.yaml"
 	snitch := "/etc/cassandra/cassandra-rackdc.properties"
 	jvmIn := "/usr/local/apache-cassandra/conf/jvm.options"
 	jvmOut := "/etc/cassandra/jvm.options"

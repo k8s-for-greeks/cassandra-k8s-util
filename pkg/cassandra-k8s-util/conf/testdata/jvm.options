@@ -245,3 +245,7 @@
 -D-Dcassandra.ring_delay_ms=30000
 -Xms4G
 -Xmx4G
+-Dcassandra.migration_task_wait_in_seconds=-1
+-D-Dcassandra.ring_delay_ms=30000
+-Xms4G
+-Xmx4G

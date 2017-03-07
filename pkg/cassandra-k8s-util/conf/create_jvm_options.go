@@ -75,5 +75,7 @@ func (jvm JVMOptions) WriteJVMOptions(maxHeap string, ringDelay string, migratio
 		}
 	}
 
+	// FIXME add jolokia once I have it working
+
 	return nil
 }
