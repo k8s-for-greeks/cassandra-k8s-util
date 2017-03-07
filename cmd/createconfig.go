@@ -26,10 +26,10 @@ import (
 )
 
 type CreateConfigOptions struct {
-	cassandraConfDir  string
+	cassandraConfDir   string
 	cassandraConfInput string
-	jvmConfInput string
-	jvmConfOutput string
+	jvmConfInput       string
+	jvmConfOutput      string
 }
 
 func NewCreateConfigCmd(out io.Writer) *cobra.Command {
@@ -58,7 +58,6 @@ to quickly create a Cobra application.`,
 
 	return command
 }
-
 
 // TODO trim last "/"
 
@@ -97,19 +96,17 @@ func RunCreateConfig(cmd *cobra.Command, args []string, output io.Writer, option
 		return fmt.Errorf("error writing cassandra config: %v", err)
 	}
 
-
 	if options.jvmConfInput != "" {
 		jvmIn = options.jvmConfInput
 	}
 
-
-	j := conf.CreateJVMOptions(jvmIn,jvmOut)
+	j := conf.CreateJVMOptions(jvmIn, jvmOut)
 
 	heap := os.Getenv("CASSANDRA_MAX_HEAP")
 	ringDelay := os.Getenv("CASSANDRA_RING_DELAY")
 	migrationWait := os.Getenv("CASSANDRA_MIGRATION_WAIT")
 
-	err = j.WriteJVMOptions(heap,ringDelay,migrationWait)
+	err = j.WriteJVMOptions(heap, ringDelay, migrationWait)
 
 	if err != nil {
 		return fmt.Errorf("error creating jvm options file: %v", err)

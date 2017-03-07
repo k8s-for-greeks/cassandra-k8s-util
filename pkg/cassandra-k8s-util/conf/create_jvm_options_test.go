@@ -30,7 +30,7 @@ func TestWriteJVMOptions(t *testing.T) {
 
 	j := CreateJVMOptions("testdata/jvm.options", f.Name())
 
-	err = j.WriteJVMOptions("4G", "30000","-1" )
+	err = j.WriteJVMOptions("4G", "30000", "-1")
 
 	if err != nil {
 		t.Fatal(err)

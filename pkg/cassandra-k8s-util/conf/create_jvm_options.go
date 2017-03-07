@@ -44,7 +44,6 @@ func (jvm JVMOptions) WriteJVMOptions(maxHeap string, ringDelay string, migratio
 
 	defer f.Close()
 
-
 	if migrationWait == "" {
 		migrationWait = "-1"
 	}
@@ -57,8 +56,6 @@ func (jvm JVMOptions) WriteJVMOptions(maxHeap string, ringDelay string, migratio
 	if ringDelay == "" {
 		ringDelay = "30000"
 	}
-
-
 
 	s = fmt.Sprintf("-D-Dcassandra.ring_delay_ms=%s\n", ringDelay)
 	if _, err = f.WriteString(s); err != nil {
