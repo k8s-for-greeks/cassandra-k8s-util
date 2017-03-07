@@ -56,6 +56,7 @@ func init() {
 func NewCmdRoot(out io.Writer) *cobra.Command {
 
 	RootCmd.AddCommand(NewCodeGenCmd(out))
+	RootCmd.AddCommand(NewCreateConfigCmd(out))
 
 	return RootCmd
 }

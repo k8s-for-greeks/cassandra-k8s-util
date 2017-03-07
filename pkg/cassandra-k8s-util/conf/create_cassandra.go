@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cass
+package conf
 
 import (
 	"io/ioutil"
@@ -34,12 +34,11 @@ type CassandraConf struct {
 	outputFilename string
 }
 
-func CreateCassandraConf(inputFilename string) *CassandraConf {
-
+func CreateCassandraConf(inputFilename string, outputFilename string) *CassandraConf {
 	return &CassandraConf{
 		conf:           &CassandraYaml{},
 		inputFilename:  inputFilename,
-		outputFilename: "/etc/cassandra/conf/",
+		outputFilename: outputFilename,
 	}
 }
 
@@ -63,8 +62,25 @@ func (cass CassandraConf) ReadCreateCassandraConf() (*CassandraConf, error) {
 	return &cass, nil
 }
 
+// TODO - this function is messy ... how do we make it better?
+
 func (cass CassandraConf) CreateCassandraConf(env []string) (*CassandraConf, error) {
+
+	// TODO migration wait and ring delay into jvm
+
+	var setNumTokens, setAutoBootstrap = true, true
+
 	for _, e := range env {
+		if strings.HasPrefix(e, "POD_IP") {
+
+			a := strings.Split(e, "=")
+
+			v := reflect.ValueOf(cass.conf).Elem().FieldByName("ListenAddress")
+			if v.IsValid() {
+				v.SetString(a[1])
+			}
+
+		}
 
 		if !strings.HasPrefix(e, "CASSANDRA_") || e == "CASSANDRA_DC" || e == "CASSANDRA_RACK" {
 			continue
@@ -72,6 +88,12 @@ func (cass CassandraConf) CreateCassandraConf(env []string) (*CassandraConf, err
 
 		a := strings.Split(e, "=")
 		key := strings.ToLower(strings.Replace(a[0], "CASSANDRA_", "", -1))
+
+		if key == "NUM_TOKENS" {
+			setNumTokens = false
+		} else if key == "AUTO_BOOTSTRAP" {
+			setAutoBootstrap = false
+		}
 
 		value := a[1]
 
@@ -103,9 +125,40 @@ func (cass CassandraConf) CreateCassandraConf(env []string) (*CassandraConf, err
 				v.SetString(value)
 			} else if v.Kind() == reflect.Struct {
 				return nil, fmt.Errorf("struct is not supported yet")
+			} else {
+				return nil, fmt.Errorf("not sure how we got here, but we should have not, we did not find the type.")
 			}
+		} else {
+			glog.Warningf("unable to find %q field in cassandraYaml struct", key)
 		}
 
+	}
+
+	// We are hard coding this regardless
+	v := reflect.ValueOf(cass.conf).Elem().FieldByName("RPCAddress")
+	if v.IsValid() {
+		v.SetString("0.0.0.0")
+	} else {
+		glog.Warningf("unable to find RPCAddress field in cassandraYaml struct")
+	}
+
+	if setNumTokens {
+		v := reflect.ValueOf(cass.conf).Elem().FieldByName("NumTokens")
+		if v.IsValid() {
+			v.SetInt(int64(32))
+		}
+	} else {
+		glog.Warningf("unable to find NumTokens field in cassandraYaml struct")
+	}
+
+	if setAutoBootstrap {
+		v := reflect.ValueOf(cass.conf).Elem().FieldByName("AutoBootstrap")
+		if v.IsValid() {
+			v.SetBool(false)
+		}
+
+	} else {
+		glog.Warningf("unable to find AutoBootstrap field in AutoBootstrap struct")
 	}
 
 	dir := "/var/lib/cassandra/"

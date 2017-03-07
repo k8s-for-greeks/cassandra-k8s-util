@@ -16,7 +16,7 @@
 // Generated code, more details cassandra-k8s-util codegen -h
 ////
 
-package cass
+package conf
 
 type CassandraYaml struct {
 	Authenticator                                 string               `yaml:"authenticator" json:"authenticator"`

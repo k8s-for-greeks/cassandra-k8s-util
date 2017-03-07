@@ -15,38 +15,117 @@
 package cmd
 
 import (
-	"fmt"
+	"io"
 
+	"github.com/k8s-for-greeks/cassandra-k8s-util/pkg/cassandra-k8s-util/conf"
+	helper "github.com/k8s-for-greeks/cassandra-k8s-util/pkg/util/cmd"
 	"github.com/spf13/cobra"
+
+	"fmt"
+	"os"
 )
 
-// createconfigCmd represents the createconfig command
-var createconfigCmd = &cobra.Command{
-	Use:   "create-config",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
+type CreateConfigOptions struct {
+	cassandraConfDir  string
+	cassandraConfInput string
+	jvmConfInput string
+	jvmConfOutput string
+}
+
+func NewCreateConfigCmd(out io.Writer) *cobra.Command {
+	options := &CreateConfigOptions{}
+	// createconfigCmd represents the createconfig command
+	command := &cobra.Command{
+		Use:   "create-config",
+		Short: "A brief description of your command",
+		Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		fmt.Println("createconfig called")
-	},
+		Run: func(cmd *cobra.Command, args []string) {
+			err := RunCreateConfig(cmd, args, out, options)
+			if err != nil {
+				helper.ExitWithError(err)
+			}
+		},
+	}
+
+	// TODO add new option values
+	command.Flags().StringVarP(&options.cassandraConfDir, "cassandra-conf-dir", "d", options.cassandraConfDir, "code file")
+	command.Flags().StringVarP(&options.cassandraConfInput, "cassandra-conf-input", "in", options.cassandraConfInput, "code file")
+
+	return command
 }
 
-func init() {
-	RootCmd.AddCommand(createconfigCmd)
 
-	// Here you will define your flags and configuration settings.
+// TODO trim last "/"
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createconfigCmd.PersistentFlags().String("foo", "", "A help for foo")
+func RunCreateConfig(cmd *cobra.Command, args []string, output io.Writer, options *CreateConfigOptions) error {
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createconfigCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	in := "/usr/local/apache-cassandra/conf/cassandra.yaml"
+	out := "/etc/conf/cassandra.yaml"
+	snitch := "/etc/cassandra/cassandra-rackdc.properties"
+	jvmIn := "/usr/local/apache-cassandra/conf/jvm.options"
+	jvmOut := "/etc/cassandra/jvm.options"
+
+	if options.cassandraConfInput != "" {
+		in = options.cassandraConfInput
+	}
+
+	if options.cassandraConfDir != "" {
+		out = options.cassandraConfDir + "/cassandra.yaml"
+		snitch = options.cassandraConfDir + "/cassandra-rackdc.options"
+		jvmOut = options.cassandraConfDir + "/jvm.options"
+	}
+
+	c := conf.CreateCassandraConf(in, out)
+	c, err := c.ReadCreateCassandraConf()
+
+	if err != nil {
+		return fmt.Errorf("unable to read cassandra config: %v", err)
+	}
+
+	c, err = c.CreateCassandraConf(os.Environ())
+
+	if err != nil {
+		return fmt.Errorf("error creating cassandra config: %v", err)
+	}
+
+	if err = c.WriteCassandraConf(); err != nil {
+		return fmt.Errorf("error writing cassandra config: %v", err)
+	}
+
+
+	if options.jvmConfInput != "" {
+		jvmIn = options.jvmConfInput
+	}
+
+
+	j := conf.CreateJVMOptions(jvmIn,jvmOut)
+
+	heap := os.Getenv("CASSANDRA_MAX_HEAP")
+	ringDelay := os.Getenv("CASSANDRA_RING_DELAY")
+	migrationWait := os.Getenv("CASSANDRA_MIGRATION_WAIT")
+
+	err = j.WriteJVMOptions(heap,ringDelay,migrationWait)
+
+	if err != nil {
+		return fmt.Errorf("error creating jvm options file: %v", err)
+	}
+
+	s := conf.CreateGossipSnitchOptions(snitch)
+
+	dc := os.Getenv("CASSANDRA_DC")
+	rack := os.Getenv("CASSANDRA_RACK")
+
+	err = s.WriteGossipSnitchOptions(dc, rack)
+
+	if err != nil {
+		return fmt.Errorf("error creating snitch file: %v", err)
+	}
+
+	return nil
 
 }

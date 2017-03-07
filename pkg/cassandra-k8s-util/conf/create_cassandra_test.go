@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cass
+package conf
 
 import (
 	"io/ioutil"
@@ -22,7 +22,7 @@ import (
 
 func TestReadCassandraConf(t *testing.T) {
 
-	c := CreateCassandraConf("testdata/cassandra.yaml")
+	c := CreateCassandraConf("testdata/cassandra.yaml", "")
 	c, err := c.ReadCreateCassandraConf()
 	if err != nil {
 		t.Fatal(err)
@@ -35,7 +35,7 @@ func TestReadCassandraConf(t *testing.T) {
 }
 
 func TestCreateCassandraConf(t *testing.T) {
-	c := CreateCassandraConf("testdata/cassandra.yaml")
+	c := CreateCassandraConf("testdata/cassandra.yaml", "")
 	c, err := c.ReadCreateCassandraConf()
 	if err != nil {
 		t.Fatal(err)
@@ -57,20 +57,20 @@ func TestCreateCassandraConf(t *testing.T) {
 }
 
 func TestWriteCreateCassandraConf(t *testing.T) {
-	c := CreateCassandraConf("testdata/cassandra.yaml")
-	c, err := c.ReadCreateCassandraConf()
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	c.outputFilename = ""
 	f, err := ioutil.TempFile("", "testconf")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer syscall.Unlink(f.Name())
-	c.outputFilename = f.Name()
+
+	c := CreateCassandraConf("testdata/cassandra.yaml", f.Name())
+
+	c, err = c.ReadCreateCassandraConf()
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	err = c.WriteCassandraConf()
 
@@ -78,7 +78,7 @@ func TestWriteCreateCassandraConf(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c = CreateCassandraConf(f.Name())
+	c = CreateCassandraConf(f.Name(), "")
 	c, err = c.ReadCreateCassandraConf()
 
 	if err != nil {
